@@ -1,0 +1,1143 @@
+https://www.hostafrica.co.za/blog/new-technologies/install-kubernetes-delpoy-cluster-centos-7/
+kubanates install karana hati meke tyenwa 
+ [ mulin docker insstall karala inne ]
+
+
+
+mulin vm dekak hadaganna oni 
+dekema install karamu
+ekak master anika slave
+
+mulin docker install karala inna oni 
+eka wena site ekak balaana karanna  oni 
+cuz me site eke ee kiyala tyenwa widiha wada karanne naha 
+
+https://docs.docker.com/engine/install/centos/
+meke widihata karamu
+
+repository eka add karaddi mehema error ekak awa
+Could not fetch/save url https://download.docker.com/linux/centos/docker-ce.repo to file /etc/yum.repos.d/docker-ce.repo: [Errno 14] curl#7 - "Failed connect to download.docker.com:443; Operation now in progress"
+
+so mama eeka google kalaa
+
+[repo eka nAthuwa install docker command wadak naha 
+terumak naha ]
+
+https://unix.stackexchange.com/questions/549245/centos-7-install-docker-failed
+
+meke thibba solution eka
+
+/etc/yum.conf
+ekata
+ip_resolve = 4 
+
+kiyala antimata damma
+
+aluth vm ekak gattha parana eka delete karal 
+
+hostnamectl set-hostname master-node
+
+setenforce 0
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+swapoff -a
+
+yum install -y yum-utils device-mapper-persistent-data lvm2
+/etc/yum.conf
+ekata
+ip_resolve = 4 
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+yum install -y docker-ce
+
+vi /etc/yum.repos.d/kubernetes.repo
+
+yum install -y kubelet kubeadm kubectl
+
+
+
+
+https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for kubernetes
+Trying other mirror.
+
+
+ One of the configured repositories failed (Kubernetes),
+ and yum doesn't have enough cached data to continue. At this point the only
+ safe thing yum can do is fail. There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=kubernetes ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
+
+            yum-config-manager --disable kubernetes
+        or
+            subscription-manager repos --disable=kubernetes
+
+     5. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=kubernetes.skip_if_unavailable=true
+
+failure: repodata/repomd.xml from kubernetes: [Errno 256] No more mirrors to try.
+https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodat
+
+
+https://stackoverflow.com/questions/71492488/kubernetes-repository-fail
+
+meeka wAda kalaa
+
+
+
+
+# adding google kubernetes repository for amd64 (x86_64) architecture
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+
+meka ta passe 
+
+yum search kubeadm
+
+kiyala gahuwa
+
+ammo hari eek 
+
+
+
+
+
+
+mehema error ekak aawa
+
+
+
+
+
+
+
+hari dn aaya api yan uda tutorial eka continue karanna
+
+
+
+
+ambo dan hari 
+
+
+dan aaya  tutorial eka continue karanna oni 
+
+but mehema karamu 
+
+
+================================
+
+aluthin vm eka k hadala eeke tutorial eka continue karamu
+error awoth witharak uda solution ekata yamu
+
+
+https://www.hostafrica.co.za/blog/new-technologies/install-kubernetes-delpoy-cluster-centos-7/
+
+hostnamectl set-hostname master-node
+
+yum install -y yum-utils device-mapper-persistent-data lvm2
+
+
+/etc/yum.conf
+ekata
+ip_resolve = 4 
+
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+yum install docker-ce
+
+
+systemctl start docker
+
+systemctl enable docker
+
+
+vi /etc/yum.repos.d/kubernetes.repo
+
+ yum install -y kubelet
+
+methendi kelawenwa 
+
+so 
+
+
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+mmeka daanna 
+
+
+ee paara wAda
+
+
+
+yum install -y kubelet
+yum install -y kubeadm
+
+
+dan master eken clone ekak gamu
+
+worker eke
+
+hostnamectl set-hostname W-node1
+exec bash
+
+
+pahale eka run karanna oni 
+worker eke
+
+sudo cat <<EOF>> /etc/hosts
+192.168.8.169 master-node
+192.168.8.138 node1 W-node1
+EOF
+
+
+pc dekma
+
+setenforce 0
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+reboot
+
+
+masters eke witharak 
+
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=2379-2380/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo firewall-cmd --permanent --add-port=10251/tcp
+sudo firewall-cmd --permanent --add-port=10252/tcp
+sudo firewall-cmd --permanent --add-port=10255/tcp
+sudo firewall-cmd --reload
+
+
+worker wala witarak 
+
+sudo firewall-cmd --permanent --add-port=10251/tcp
+sudo firewall-cmd --permanent --add-port=10255/tcp
+sudo firewall-cmd --reload
+
+
+pc okkogema karame
+
+cat <<EOF > /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sudo sysctl --system
+
+
+dekema
+
+sed -i '/swap/d' /etc/fstab
+sudo swapoff -a
+
+
+mama hithanne master eke witarak 
+
+kubeadm init
+
+anthimata ena string eka worker node wala execute karala meekata eewa connect karnn pluwan
+
+
+ado 
+eketh erro ekak awa
+
+
+       [WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+        [WARNING Service-Kubelet]: kubelet service is not enabled, please run 'systemctl enable kubelet.service'
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR NumCPU]: the number of available CPUs 1 is less than the required 2
+        [ERROR Mem]: the system RAM (990 MB) is less than the minimum 1700 MB
+        [ERROR CRI]: container runtime is not running: output: E0908 03:30:15.470711    1549 remote_runtime.go:925] "Status from runtime service failed" err="rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+time="2022-09-08T03:30:15-04:00" level=fatal msg="getting status of runtime: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+, error: exit status 1
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+To see the stack trace of this error execute with --v=5 or higher
+
+
+kubeadm init --ignore-preflight-errors=NumCPU
+kubeadm init --ignore-preflight-errors=all   [ mehema dennath plwan eeka awadaanam wadi habayi ]
+
+kiyana eka gahala ee error ganan ganna epa kiyala idiriyata giyaa
+
+
+e para 
+cpu error eka nathuwa ram error eka awa
+
+
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR Mem]: the system RAM (990 MB) is less than the minimum 1700 MB
+        [ERROR CRI]: container runtime 
+
+so mama vm eke ram eka wadi karala aya baluwa
+
+
+ee paaa
+
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR CRI]: container runtime is not running: output: E0908 03:38:34.769893    8297 remote_runtime.go:925] "Status from runtime service failed" err="rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+
+
+kiyala awa
+
+
+rm /etc/containerd/config.toml
+systemctl restart containerd
+kubeadm init --ignore-preflight-errors=NumCPU
+
+baluwa
+
+
+eeken aawa token eka
+
+kubeadm join 192.168.8.169:6443 --token z96yoa.lmd9if8snwu6xcus \
+        --discovery-token-ca-cert-hash sha256:fab0f073354f40254b04a22159a54d8dcc3468f51d846e11d10d0f559920f4d5
+
+
+eeka worker eke run kalaama 
+
+error ekak awa
+so
+
+rm /etc/containerd/config.toml
+systemctl restart containerd
+kubeadm join 192.168.8.169:6443 --token z96yoa.lmd9if8snwu6xcus \
+        --discovery-token-ca-cert-hash sha256:fab0f073354f40254b04a22159a54d8dcc3468f51d846e11d10d0f559920f4d5
+
+
+
+hari dan master eke
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config   
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl get nodes
+kubectl get pods --all-namespaces
+export kubever=$(kubectl version | base64 | tr -d '\n')
+kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version=$kubever
+
+
+
+
+installation eka iwarai 
+
+dan idiriyata balamu
+
+kubectl get nodes
+
+
+
+dan deployement ekak daamu
+
+
+vi nginx-deployment.yaml
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+
+
+
+kubectl create -f nginx-deployment.yaml
+kubectl get deployment
+kubectl describe deployment nginx-deployment
+kubectl get pods
+
+
+
+ 
+
+ 
+
+kubectl delete  deployment nginx-deployment
+	kiyala deployement eka delete karanna pluwam
+
+
+dAn api advanced 
+e kianne port eka eliyata daaana widihak balamu
+
+
+
+port forward karana eka mehema karanna pluwan
+
+kubectl port-forward deployment/my-deployment 8080:80
+https://www.golinuxcloud.com/kubectl-port-forward/	site eka
+
+
+
+
+kubectl get svc 
+me command eken port tika balagana pluwan 
+
+
+
+======================
+
+mn hithanne deployment ekak expose karanna baha directly 
+eekata service ekak hadala eeka haraha thama expose karnana oni 
+
+anyway 
+api balamu
+
+https://www.loginradius.com/blog/engineering/rest-api-kubernetes/
+
+me link eke tyena eka karamu
+uda deployement file ekai deployement eka i okkoma ayin karala patangamu
+
+
+curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+
+k3d cluster create test -p "80:80@loadbalancer"
+
+kubectl config view
+kubectl config current-context
+
+docker ps
+
+network open wela tyna container eke ip eka gamu 
+
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id
+
+me ip eka gahala baluwama 
+404 not found ekak enwa curl eka enwa [ vm eka athule idala . eliyata expose wela naha / browser eken yann baha] 
+ehema hari enwa kiyanne server up
+
+kubectl get pods -A
+kubectl describe pods -A
+
+kubectl api-resources
+
+
+mkdir my-backend-api && cd my-backend-api
+touch server.js
+npm init
+npm i express --save
+
+kalin hadapu cluster eka port 80 waka tyena nisa meka up kalaama case
+
+so eka down karamu
+
+k3d cluster list
+
+k3d cluster delete  <name>
+
+
+node server.js
+
+thama pc eke ip eka gahuwata wAdak naha
+port forward wela nah
+
+vi Dockerfile
+[ .txt naha hode ]
+
+vi .dockerignore
+
+
+docker build -t <YOUR_DOCKER_ID>/my-backend-api .
+docker build -t image_name .
+[ docker file eke tyena adaala image eka pull karala inna . nattham error]
+
+meken hadenwa imageeka
+docker images
+eken balapan 
+id eka ekk tyenwa 
+
+
+
+kubectl create deploy my-backend-api --image=image_name
+
+vi deployment.yaml
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-backend-api
+  labels:
+    app: my-backend-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-backend-api
+  template:
+    metadata:
+      labels:
+        app: my-backend-api
+    spec:
+      containers:
+      - name: my-backend-api
+        image: andyy5/my-backend-api
+
+
+
+kubectl expose deploy my-backend-api --type=ClusterIP --port=80
+
+
+
+
+vi service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-backend-api
+  labels:
+    app: my-backend-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: my-backend-api
+
+
+
+kubectl create -f service.yaml
+
+
+
+
+kubectl get svc -A
+kubectl get pods -A
+
+
+
+
+
+
+=======================
+
+
+
+aluth deploymet
+
+kubectl get deploy -A
+kubectl get deploy 
+kubectl get pods
+kubectl get pods -A
+kubectl get deployments
+kubectl get deployments -A
+kubectl get services
+kubectl get services -A
+kubectl get svc -A
+kubectl get svc
+
+kubectl delete  svc <kubanates name>
+
+[ svc kiyanne services kiiyana eka ]
+
+me wage command thama  tyenne
+
+
+================================================
+
+aluth deployment ekak balaana kalaa
+
+
+
+
+[ note 
+docker wala volume ekakata eka container ekakin access thibbata aluth container walata eekata access nathi seen ekak tyenne 
+eeka hadannatth pluwan athi hAbayi 
+docker wala wenama volume kiyala ekak use karanna pluwan 
+eewa tyenne wenama docker volume tyena folder ekaka encrpt wela
+
+docker ls volume
+kiyala gahala ee volume balaganna pluwan 
+
+ehema volume ekak nodaa oninm vm eke folder ekakata mount ekak gahannaht plwan data percistant tyaganna 
+]
+
+
+kubanates wala ekama pod ekak athule inna container dekak ekama namespace ekata wAtenne
+so local host kiyala anikata kathakarana pluwan 
+node dekaka [ e kiyanne virtual matchine dekaka ] run wena container dekak ekama pod ekak athulata ganna pluwan athi neda . ethkota eewa ekama namespac eke so localhost kiyala kathakaranna pluwan 
+i think possible athi
+https://stackoverflow.com/questions/64365330/can-a-pod-run-on-multiple-nodes
+https://stackoverflow.com/questions/47227019/kubernetes-one-pod-more-containers-on-more-nodes
+mata peeenne meka karanna baha wage
+kubernetes.io/docs/concepts/workloads/pods/pod-overview As they say in the documentation here: The containers in a Pod are automatically co-located and co-scheduled on the same physical or virtual machine in the cluster. This means a pod's containers are always on the same node. If you want to scale horizontally, you could put the containers into seperate pods.
+uda answe eka kiyawala balannako 
+
+
+
+
+
+
+
+===========================
+
+
+
+https://www.youtube.com/watch?v=du1Btl68M04&list=PL5aiACSBE1H0I2nF76IY972aPhXXFmxpw
+
+uda video eka balaana mula idala haduwa
+
+
+
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-example
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+
+
+uda eka pod.yml 
+
+kiyala dala 
+
+kubectl create -f pod.yml
+kiyala danna [ -f kianne file kiyana eka ]
+
+
+kubectl get pods
+kiyana eken pod tika balaganna pluwan
+
+
+label kiyala jathikyak tyenaw 
+eeka magin api label danwa eka eka ewata
+
+apita ilagata pluwan ee adala labal eka tyena node wala witarak me aluth node eka run wenna kiyanna
+
+
+
+
+
+deployment ekak hadanna yanne
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+
+[
+meka deployement ekak unta antimata hadenne th pod ekak ma thamai lu
+ekata adaala kotasa thama antimata tyenne
+
+    spec:
+      containers:
+      - name: nginx
+      image: nginx
+      ports:
+      - containerPort: 80
+
+mee kAlla
+
+
+]
+
+
+
+hari file eka  deploy.yml kiyala save karamu
+
+kubectl create -f deploy.yml 
+
+
+kubectl get deployment
+
+eken deployment eka ganna pluwan
+magic eka thama
+kubectl get pods
+gahuwama pod gaana wAdi wela
+e kiyanne . pods hAdenne deployment ekakin 
+e wage ma ee deployment eka
+ kubectl delete deployment <dep name >
+eken delete kaloth ehema , ita passe ara pod tika ibema nAthi wenwa 
+[ kohomath meeka auto ee okkoma handle karanawa ne . container pawa ayin karanwa . api manually ayin karanna oni naha ]
+
+
+
+
+stateful set kiyala jathiyak tyenwa 
+ekedi pod ekak die wela  aaya up unahama kalin thibba nama ma enwa 
+eeka useful api ta mokak hari storage ekak eekata attach karagana oni nm 
+
+
+
+[ 
+meke api deployment ekak daala ita passe pod ekak hari mokak hari auo makunoth aaya eeka hadanwa ne 
+auto makunoth witarak newe
+api 
+kubectl delete pod <pod name >
+eken makuwath eeka aaya hAdenwa  automatidcally 
+]
+
+
+
+docker swarm eka run kalaama 
+docker ps gahuwata passe run wena container penwanwane
+but 
+kubanates run kalaata ehema 
+docker ps 
+ekata output ekak denne naha 
+i guess
+
+
+oyata pod ekak athulata yanna oni nm
+kubectl exec -it <pod name > bash
+
+gaha la yanna pluwan
+pod ekaka container kipayak tyenna pluwan . ehema welawata eka container ekakata manually athul wela monawa hari kaloth case nisada danne naha
+docker ps eken output enne natthe
+
+e wenuwata wena command ekak tyewna oninm kubanates walin hadapy container tika balaganna 
+
+https://stackoverflow.com/questions/44181725/kubernetes-pods-are-running-but-docker-ps-does-not-give-any-output
+
+uda link eka kiyawanna 
+ethkota terei 
+
+
+
+
+services jaathi thunai 
+
+ekak  
+cllusterIP
+anika 
+NodePort
+anika 
+LoadBalancer
+
+samanyen default hadenne clusterIP eka 
+but eliyen user kenek enwa nm 
+nodeport
+hari 
+loadbalancer ekak hari daanna wenwa 
+
+
+nodePort dAmmoth nodes [ virtual matchines ] walata eliyen direct enna pluwan 
+e kiyanne node eke ip eka gahala website ekak nam eekata access ganna pluwan
+but eeka wadayak ne 
+ip hama ekama mathaka tyaganna wage seen ekak set wenwa ne 
+so we can use the  loadbalancer instead 
+
+
+
+
+
+
+
+
+
+
+
+dan api 
+
+ vi pod.yml
+
+kiyana eke mewa damu
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: proxy
+spec:
+  containers:
+  - name: nginx
+    image: nginx:stable
+    ports:
+      - containerPort: 80
+        name: http-web-svc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+  - nodePort: 32410
+    protocol: TCP
+    port: 80
+    targetPort: http-web-svc
+
+
+
+thani file eke uda okkoma liyawenna oni hode
+
+
+dan 
+kubectl create -f pod.yml
+danatama pod.yml eka kalin deploy karala nm tyenne
+
+kubectl apply -f pod.yml
+kiyana eken karanna pluwan wade.
+
+
+dan 
+kubectl get services
+gahala balann 
+
+
+ip eka gahala curl ekakui pita browser ekakaki access gannai baluwa 
+but conectin refused
+api firewall off karamu okkogema
+sudo systemctl stop firewalld
+sudo systemctl restart network.service
+
+thaama connection refused
+
+
+
+gahala athulata enna balamu
+[ meke docker wala wage port forward karana seen ekak neweda manda tyenne . habayi kohomath port ekanm forward karanna wei kiyala thama matanm hithenne . mokada athulen curl karanna pluwan vm eke ip eka newe . kubanates wala ip ekane
+
+naha naha port forward karanne naha . services kiyala concept ekak tyenwa  .. eken game gahanne 
+]
+
+
+
+ara file ekatama loadbalaner ekak dala balamu
+
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: proxy
+spec:
+  containers:
+  - name: nginx
+    image: nginx:stable
+    ports:
+      - containerPort: 80
+        name: http-web-svc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    protocol: TCP
+    port: 80
+    targetPort: http-web-svc
+
+
+
+
+
+kalin pod / services delete karala 
+kubectl create -f pod.yml
+
+LoadBalancer dala localhost deploy kalaama error ekak enwa 
+atthatama localhost ekedi eya danne naha loadbalancer kiyala ekak 
+ekai ehema wenne
+but oya cloud provider kenek ge deploy kaloth ehema error enne naha ,.[ practical eka kala nisa meeka click une. balapan practicaly meka karana eke wAdaath kama . video ekenm kohomath kiyanawa cloud ekaka run kaloth witarai meeka wAda karanne kiyala . but baladdi ooko meter wenne naha . erro ekak enakanma inna oni ooka hari yata oluwata yanna ]
+
+
+
+
+mekath aul ne 
+
+
+
+so api fresh pita balamu aluth ekak gahanna wena ekak balaana 
+
+
+=====================
+
+
+
+
+https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/
+
+meke widihata karamu
+
+
+kubectl apply -f https://k8s.io/examples/service/load-balancer-example.yaml
+kiyala ekak tyewna 
+eka karapan 
+eeken onlune tyena file ekak kelinma apita deploy wenwa 
+oninm 
+
+https://k8s.io/examples/service/load-balancer-example.yaml
+
+eka ta gihilla balanna 
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: load-balancer-example
+  name: hello-world
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: load-balancer-example
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: load-balancer-example
+    spec:
+      containers:
+      - image: gcr.io/google-samples/node-hello:1.0
+        name: hello-world
+        ports:
+        - containerPort: 8080
+
+
+mehema content ekak tyena file ekak enne 
+
+
+
+mage pc eke mulin docker file pull karala inna 
+natham download wenne nah 
+mokadda danne naha hetuwa
+
+
+kubectl get deployments hello-world
+kubectl describe deployments hello-world
+gahanna
+
+kubectl get replicasets
+kubectl describe replicasets
+
+[ up wenakan inna
+
+]
+
+
+kubectl expose deployment hello-world --type=LoadBalancer --name=my-service
+
+
+kubectl get services my-service
+
+
+kubectl describe services my-service
+
+ meke enwa 
+LoadBalancer Ingress:   104.198.205.71
+[ meka enwa atthe cloud wala host karaddi neda mokada nAttham mage enna epaya ]
+kiyala ekak 
+ee ip eka ganna oni  
+
+
+kubectl get pods --output=wide
+meken pods wala port balala api uda gatthu ip ekai port ekai gahala curl gaala balanna oni 
+
+
+
+
+ekath fail
+
+
+
+api mehema karamu 
+
+
+services saha deployements ayin karaala pc deka restart karamu
+
+
+kubectl delete services my-service
+
+kubectl delete deployment hello-world
+
+======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://katharharshal1.medium.com/steps-to-access-the-pod-from-outside-the-cluster-using-nodeport-e9c194b986df
+
+meeka balagenawath karamu balanna
+
+vi pod.yaml 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+
+
+kubectl create -f pod.yaml 
+
+
+vi service.yaml
+
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30080
+      name: http
+    - port: 443
+      nodePort: 30443
+      name: https
+  selector:
+    name: nginx
+
+
+
+
+
+
+docker pull nginx
+gahala inna 
+nattham kelawenwa 
+
+kubectl create -f service.yaml
+
+
+kubectl get svc
+kubectl describe svc <servicename>
+
+
+
+mekath goda daanna baha ne 
+==================
+
+meke tyenne 
+pods - container
+deployments 
+services
+
+thama predanawama 
+
+
+
+storages 
+samahara volume tyenwa eewa ge data pod eka [ container ma thama neh ] restart unaata kohomath rAdila tyenwa  but delete kaloth rAdila tyenwada nAdda kiyana ekathiranaya wenne voume eke type eka matha . [ docker wagema thama ]
+
+
+
+
+deployment eka wenne natthe cpu dekak nodii ekak dunna nisa da danne nah ane 
+
+
+
+
+https://kubernetes.io/docs/tutorials/_print/
+meke tyenwa minicube kiyala ekak use karana gamn deployment ekak karana 
+ekath karala balanna
+
+
+
+file pitin add karanawa wage file pitin delete karanna plwan
+
+
+ kubectl delete -f pods01.yaml
+
+https://collabnix.github.io/kubelabs/pods101/deploy-your-first-nginx-pod.html
+
+
+
