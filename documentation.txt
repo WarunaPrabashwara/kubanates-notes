@@ -1141,3 +1141,22 @@ https://collabnix.github.io/kubelabs/pods101/deploy-your-first-nginx-pod.html
 
 
 
+Kubernetes, also known as K8s,
+kubanates saha k8s yanu ekama lu
+
+
+
+
+kubanates walath port forwadin tyenwa lu
+but eeka short t erm lu wAda karanne 
+https://stackoverflow.com/questions/61032945/difference-between-kubectl-port-forwarding-and-nodeport-service
+uda link eka balanna ko 
+terei seen eka 
+You are comparing two completely different things. You should compare ClusterIP, NodePort, LoadBalancer and Ingress.
+The first and most important difference is that NodePort expose is persistent while by doing it using port-forwarding, you always have to run kubectl port-forward ... and kept it active.
+kubectl port-forward is meant for testing, labs, troubleshooting and not for long term solutions. It will create a tunnel between your machine and kubernetes so this solution will serve demands from/to your machine.
+NodePort can give you long term solution and it can serve demands from/to anywhere inside the network your nodes reside.
+kubectl get pods
+kubectl port-forward nats-Pod-5443532542c8-5mbw9 4222:4222
+
+
