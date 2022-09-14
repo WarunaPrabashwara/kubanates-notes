@@ -1,0 +1,22 @@
+docker volume ekak gatthama 
+ee volume eka wena compose file ekakin access karanwanm volume tag eke 
+external : true 
+kiyala daann oni 
+external : true kiyala daaanne new compose file eke wenna oni 
+not in the old one  wenna athi . hadapu ekak ne ithin . aaya kohomada change karanne . kiyala thama mamanm hithanne 
+
+
+hariyatama sure naha ithin 
+
+mokada external eken karanne volume eka global karana eka newene 
+compose ekata external volume walata access ganna awasthaawa dena ekane 
+ethkota ithin kalin vol eka hadana welawe external true kiyala daann oni nah 
+
+
+my guessing eka hari 
+
+https://stackoverflow.com/questions/47479767/docker-compose-volume-declared-as-external-but-could-not-be-found
+meeka balanna 
+previously create kala ekak lu ganne 
+
+
