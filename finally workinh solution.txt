@@ -1,0 +1,601 @@
+me para aashya awama cores wage spacs ekka vm ekak hadala eeke deployment ekak karanna baluwe kubanates wlin
+
+it psse eliyen access ganna
+
+
+eka vm ekak athi ithin wAdeta
+
+
+https://www.hostafrica.co.za/blog/new-technologies/install-kubernetes-delpoy-cluster-centos-7/
+meka balan karamu
+
+sudo yum check-update
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+meka gahuwata passe
+Could not fetch/save url https://download.docker.com/linux/centos/docker-ce.repo to file /etc/yum.repos.d/docker-ce.repo: [Errno 12] Timeout on ad.docker.com/linux/centos/docker-ce.repo: (28, 'timed out before SSL handshake')
+kiyala awa so 
+sudo yum install docker-ce
+kiyala gahuwata wAdak une naha
+google kala ara couldnt fetch seen eka 
+You system is resolving (and trying to use) IPv6. Probably your system only uses IPv4. To disable IPv6 on yum, add a line ip_resolve = 4 on section "main" of /etc/yum.conf file
+eeka add karala 
+reboot karala aaya repo eka add kala 
+e para hari 
+[ mama hithanne docker.come eka ipv4 server ekak ne . so ipv6 wtrak resolve weddi  kelawenwa athi. ayi bn ipv4 servers walin data ganna bahane ]
+sudo systemctl start docker
+sudo systemctl enable docker
+
+sudo vi /etc/yum.repos.d/kubernetes.repo
+dan add karapan
+
+
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+
+
+sudo yum install -y kubelet
+
+failure: repodata/repomd.xml from kubernetes: [Errno 256] No more mirrors to try.
+https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be  kubernetes
+reboot kalath hari giye naha 
+
+dan nikamata ara  /etc/yum.conf 	eke ip_resolve = 4  kiyala dapu eka ayin karapan
+hari giye naha 
+reboot kala 
+karala baluwa
+eth hari giye nah
+so aaya ip_resolve = 4  kiyana eka damma
+
+[  podi hadinwiimak
+kubeadm: the command to bootstrap the cluster.
+kubelet: the component that runs on all of the machines in your cluster and does things like starting pods and containers.
+kubectl: the command line util to talk to your cluster.
+]
+
+
+
+cat <<EOF | tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+
+mehema dammama hari giye nah
+
+gpg check karanna epa kiyala 
+[ repo_gpgcheck=0 ]
+
+e parath enne naha 
+habayi error eka wenas
+
+https://packages.cloud.google.com
+kiyana eka baluwama eeke tyenne ipv6 address ekak
+https://download.docker.com/linux/centos 
+meketh thibbe ipv6 habayi 
+
+kokatath api aaya 
+
+vi /etc/yum.conf 	eke ip_resolve = 4   kiiyana eken antimata add kala eka ayin karala balamu
+
+eeth hariyanne naha 
+so api aaya 
+vi /etc/yum.conf  ekata ip_resolve = 4   agata daamu
+
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+setenforce 0
+ado meeka kalaata passe hari giya 
+ se linux newe  repo_gpgcheck=0  	kiyala case eka  hinda meeka unee
+se linux disable karanna oni 
+
+sudo yum install -y kubeadm
+
+sudo hostnamectl set-hostname master-node
+reboot now
+
+
+sudo sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+reboot now
+
+
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=2379-2380/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo firewall-cmd --permanent --add-port=10251/tcp
+sudo firewall-cmd --permanent --add-port=10252/tcp
+sudo firewall-cmd --permanent --add-port=10255/tcp
+sudo firewall-cmd --reload
+
+
+cat <<EOF > /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+
+sudo sysctl --system
+
+sudo sed -i '/swap/d' /etc/fstab
+sudo swapoff -a
+
+
+hari mehemai 
+ingress kiyanne directly service ekak newe
+
+Unlike NodePort or LoadBalancer, Ingress is not actually a type of service. Instead, it is an entry point that sits in front of multiple services in the cluster. It can be defined as a collection of routing rules that govern how external users access services running inside a Kubernetes cluster.
+
+
+
+kubanates wala port forwarding karanna pluwan eeth eewa godak kal tyenne naha
+ikmanata yanwa 
+
+# Change mongo-75f59d57f4-4nd6q to the name of the Pod
+kubectl port-forward mongo-75f59d57f4-4nd6q 28015:27017
+
+me widihata
+27017  kianne mongo db eke port eka 
+
+
+
+https://medium.com/@mngaonkar/kubernetes-get-started-deploy-a-simple-web-server-9636f4aa8706
+meka balaana deployment ekak karanna yanne
+
+vi  nginx-deployment.yaml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+
+
+kubectl create -f nginx-deployment.yaml
+
+[ meka up karala up wenakan idala access karanna balapan hode 
+up kala gaman wAda karan naha
+]
+
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+kiyala awa
+
+sudo kubeadm init
+me widihata mulin kubanates init karala imu
+
+ [ERROR CRI]: container runtime is not running: output: E1029 07:27:36.793960   10379 remote_runtime.go:948] "Status from runtime service failed" err="rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+
+systemctl enable kubelet.service
+
+mv /etc/containerd/config.toml /etc/containerd/config.toml.backup
+systemctl restart containerd
+kubeadm init
+
+ee para hari 
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+
+dan
+
+kubectl create -f nginx-deployment.yaml
+kubectl get deployment
+
+meka gahala eeka up wenakan inn
+[ 0/1  kiyana eka  1/1 wenakan ]
+godak wela gihillath up wenne nattham 
+kubectl delete -f nginx-deployment.yaml
+[mehema kalata ara file eka  delete wenne nah ]
+docker pull nginx
+kubectl create -f nginx-deployment.yaml
+
+
+ita passe
+
+vi nginx-service.yaml 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngnix-service
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+
+
+
+kubectl create -f nginx-service.yaml
+
+kubectl get svc
+eke
+ 80:31871/TCP wage awoth
+NGINX service is available at node port 31871. Now you can access the web page at http://<node IP address>:31871
+
+
+--------------------------------------------------------
+
+any way me deployment eka up wenne naha 
+0/1 widihata digatama tyenwa 
+mama hithanne yml eke aulak 
+but kaann deyak naha 
+wena ekak try karamu
+
+adoo case eka teruna
+
+master eke kisi deyak shedule karanna bahalu
+workers ekak hari inna onilu
+eke thama pod /deployment shedule wenne i guess 
+e nisa ekko wena node ekak hadann wenwa 
+eka karadara nisa mama thawa ekak baluwa
+
+me site eka kiyawanna 
+https://computingforgeeks.com/how-to-schedule-pods-on-kubernetes-control-plane-node/
+
+By default, your Kubernetes Cluster will not schedule pods on the control-plane node for security reasons. It is recommended you keep it this way, but for test environments you may want to schedule Pods on control-plane node to maximize resource usage.
+If you want to be able to schedule pods on the Kubernetes control-plane node, you need to remove a taint on the master nodes.
+
+
+-------------------------------------------------------------------------------//////////////////////////////////////
+
+
+kubanates wala port forwarding karanna pluwan eeth eewa godak kal tyenne naha
+ikmanata yanwa 
+
+# Change mongo-75f59d57f4-4nd6q to the name of the Pod
+kubectl port-forward mongo-75f59d57f4-4nd6q 28015:27017
+
+me widihata
+27017  kianne mongo db eke port eka 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////
+
+
+hari mee magula aul yanne nat noda bridge daana nisaada danne nahne
+so api balamu bridge daala thibba eka nat dagena karanna
+nat daala ping karannath bah
+so aaya bridge dagann wenwa 
+
+
+hostnamectl set-hostname master-node
+setenforce 0
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=2379-2380/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo firewall-cmd --permanent --add-port=10251/tcp
+sudo firewall-cmd --permanent --add-port=10252/tcp
+sudo firewall-cmd --permanent --add-port=10255/tcp
+sudo firewall-cmd --permanent --add-port=10248/tcp
+sudo firewall-cmd --permanent --add-port=10251/tcp
+sudo firewall-cmd --permanent --add-port=10255/tcp
+sudo firewall-cmd --reload
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+reboot
+
+add a line ip_resolve = 4 on section "main" of vi  /etc/yum.conf file
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce
+sudo systemctl start docker
+sudo systemctl enable docker
+yum install -y kubelet kubeadm kubectl
+systemctl start docker && systemctl enable docker
+systemctl start kubelet && systemctl enable kubelet
+sudo reboot
+sudo sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+swapoff -a
+
+mv /etc/containerd/config.toml /etc/containerd/config.toml.backup
+systemctl restart containerd
+systemctl disable firewalld
+systemctl stop firewalld.service
+
+dan me pc eka shutdown karala eken clone dekk gattha  master saha slave widihata
+
+slave eke
+hostnamectl set-hostname worker-node-1
+
+master eke
+cat <<EOF>> /etc/hosts
+192.168.8.162 master-node
+192.168.8.142 node-1 worker-node-1
+EOF
+
+swapoff -a
+
+dan master eke kubanates initialize karanna yanne
+
+kubeadm init		
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+sudo kubectl get pods --all-namespaces
+coredns-565d847f94-9t7vv              0/1     Pending    
+coredns-565d847f94-mn9sf              0/1     Pending    	
+kubectl get nodes
+not ready aawe
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+tika welawak idala baluwama ready
+sudo kubectl get pods --all-namespaces.
+badu wada wage
+
+docker pull nginx
+
+https://stackoverflow.com/questions/73297599/coredns-running-status-but-not-become-ready
+kubectl run -it --rm test-nginx-svc --image=nginx  -- bash
+hari giye naha 
+curl http://<SERVICE-IP>:8080
+curl http://nginx-service:8080
+
+ado amathaka unane 
+mulin worker eke
+swapoff -a 	karala
+dan me master ekata worker eka join karawanna . init ekn apu token eka arake run karawala 
+mokada do ker swarm wage newe kubanates 
+master witarak thibila madi 
+aniwa node tyenna oni 
+
+vi nginx-deployment.yaml 
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+
+kubectl create -f nginx-deployment.yaml
+
+
+adoo tika welaawak hitiyaama up unaaa
+
+
+kubectl get deployment
+vi  nginx-service.yaml
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngnix-service
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+
+kubectl create -f nginx-service.yaml
+
+kubectl get svc
+
+you can access the web page at http://<node IP address>:31871		[ 31871 wage ankaya balanne kubectl get svc eke output eken ]
+node ip eka kiyanne svc output eke ekak newe . eeka vm eke [ worker ] ip eka 
+http://192.168.8.142:31396
+
+master eken 
+curl una 
+
+dan eliye browser eken balamu
+adoo wAda ban 
+
+dan api service eka delete karala balmu inngress kiyana eka daanna 
+[ nodeport kiyana eka ne dala thibbe. eeken vm oni ekak direct access karanna pluwan . e wagema loadbalancer danna baha . cuz eka dannanm api cloud ekaka inn oni ]
+kubectl delete -f nginx-service.yaml
+
+https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+balanna
+
+
+
+[note kubanates wala cose services pawaa run wenne container wala i guess ]
+
+
+
+
+
+
+
+
+
+
+[
+comman errors 
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+mehema enwa 
+kubectl cluster-info	gahuwa
+Kubernetes master is running at http://localhost:8080	kiyala enna oni 
+but enne nah
+
+https://k21academy.com/docker-kubernetes/the-connection-to-the-server-localhost8080-was-refused/
+me uda site eke solution eka thibba
+
+mee kaall kiyawanna 
+
+
+To start using your cluster, you need to run the following as a regular user:
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+Alternatively, if you are the root user, you can run:
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+Then you can join any number of worker nodes by running the following on each as root:
+kubeadm join 192.168.8.135:6443 --token 509z7b.tv0jql68zdb6uwet \
+        --discovery-token-ca-cert-hash sha256:3cad2a898edbd3dc956f312392b4e9adbff9accf776a3d7154badc35577bd1e8
+
+
+ 
+mama master eke 
+export KUBECONFIG=/etc/kubernetes/admin.conf
+https://kubernetes.io/docs/concepts/cluster-administration/addons/  kiyana site ekata giya 
+kubectl apply -f [podnetwork].yaml
+[  site wala tyena 	kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" 	gahuwama kelwenwa godak welawata ]
+e nisa ara site eke 
+Weave Net provides networking and network policy, will carry on working on both sides of a network partition, and does not require an external database
+kiana eke link ekata giya
+https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+me command eka thibba nisa eka run kala
+
+hammatasiri , iita psse tika welawakin meeka run karala baluwa
+kubectl get nodes
+dan  ready bro 
+dan worker eke 
+
+swapoff -a
+[ firewall disable kale nattham anawashya prashna ]
+kubeadm join 192.168.8.135:6443 --token 509z7b.tv0jql68zdb6uwet \
+        --discovery-token-ca-cert-hash sha256:3cad2a898edbd3dc956f312392b4e9adbff9accf776a3d7154badc35577bd1e8
+[ ekaparak run wela kelawila
+   [ERROR FileAvailable--etc-kubernetes-kubelet.conf]: /etc/kubernetes/kubelet.conf already exists
+        [ERROR FileAvailable--etc-kubernetes-pki-ca.crt]: /etc/kubernetes/pki/ca.crt already exists
+wage awoth 
+kubeadm reset kiyala gahanna worker eke 
+]
+
+master eke 
+kubectl get pods –all-namespaces
+gahuwama error		Error from server (NotFound): pods "–all-namespaces" not found
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"  		gahuwa
+Unable to connect to the server: dial tcp: lookup cloud.weave.works on 192.168.8.1:53: no such host
+
+vi /etc/resolv.conf 
+meekata 
+<my IP> <kubernetes-test> 	danna . ae pc eke ip eka saha ape pc eke host name eka thama ee deka 
+
+192.168.8.135  master-node
+
+damma dala reboot karamu
+reboot
+reboot kala gaman kelawini
+aaya init eke idan emu
+
+swapoff -a
+kubeadm reset 	master saha worker dekema
+kubeadm init --pod-network-cidr=10.244.0.0/16
+kubectl get nodes
+worker join karawapan
+
+
+
+
+]
+
+
+
+
+
+
+
