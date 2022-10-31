@@ -404,6 +404,8 @@ coredns-565d847f94-mn9sf              0/1     Pending
 kubectl get nodes
 not ready aawe
 kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+( parana site wala tyenne kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"  	 Kiyala command ekk. But eeka aluth eke wAda nh. Uda eka thama aluth ewage gahnn oni) 
+
 tika welawak idala baluwama ready
 sudo kubectl get pods --all-namespaces.
 badu wada wage
