@@ -371,6 +371,8 @@ sudo reboot
 sudo sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 swapoff -a
 
+
+ 
 mv /etc/containerd/config.toml /etc/containerd/config.toml.backup
 systemctl restart containerd
 systemctl disable firewalld
@@ -388,6 +390,7 @@ cat <<EOF>> /etc/hosts
 EOF
 
 swapoff -a
+Kubanates walata swap handle krnn bh. Ee mattamata develop krl nh. Ekai kelinma swap eka off krnn kynne
 
 dan master eke kubanates initialize karanna yanne
 
